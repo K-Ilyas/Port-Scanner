@@ -19,6 +19,7 @@ def get_open_ports(target, port_range, verbose=False):
     
     hostname = socket.getfqdn(ipaddr)
 
+    socket.setdefaulttimeout(1)
 
     for port in range(port_range[0], port_range[1]+1):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -31,10 +32,11 @@ def get_open_ports(target, port_range, verbose=False):
                                hostname, " ("+ipaddr+")" if ipaddr != hostname else "")
         response += "PORT     SERVICE\n"
         for index, port in enumerate(open_ports):
-            response += str.format("{}      {}{}", port,
-                                   ports_and_services.get(port, "None"), "\n" if index != len(open_ports) - 1 else "")
+            response += str.format("{}{}{}", str(port).ljust(9),
+                                   str(ports_and_services.get(port, "None")) , ("\n" if index != len(open_ports) - 1 else ""))
 
     return response if verbose else (open_ports)
 
 
-print(get_open_ports("209.216.230.240", [440, 445], False))
+print(get_open_ports("scanme.nmap.org", [20, 80], True))
+
